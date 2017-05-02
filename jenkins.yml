@@ -58,6 +58,9 @@ regions:
     deis_profile: euw
     name: eu-west
     registry_port: 5000
+  virginia:
+    deis_profile: virginia
+
 
 irc:
   nick: hms-flintstone

@@ -196,9 +196,9 @@ else if ( env.BRANCH_NAME ==~ /^demo__[\w-]+$/ ) {
                     withCredentials([[$class: 'StringBinding',
                                       credentialsId: 'SENTRY_DEMO_DSN',
                                       variable: 'SENTRY_DEMO_DSN']]) {
-                        withEnv(['DEIS_PROFILE=usw',
-                                 "DEIS_APP_NAME=${appname}",
-                                 "PRIVATE_REGISTRY=localhost:${config.regions.usw.registry_port}"]) {
+                        withEnv(['DEIS_PROFILE=virginia',
+                                 'DEIS_BIN=deis2',
+                                 "DEIS_APP_NAME=${appname}"]) {
                             sh './docker/bin/demo_deploy.sh'
                         }
                     }
