@@ -180,7 +180,7 @@ else if ( env.BRANCH_NAME ==~ /^demo__[\w-]+$/ ) {
             lock ("bedrock-docker-${env.GIT_COMMIT}") {
                 milestone()
                 try {
-                    sh 'docker/bin/build_images.sh --demo'
+                    sh 'docker/bin/build_images.sh --demo --test'
                 } catch(err) {
                     utils.ircNotification(config, [stage: 'Demo Build', status: 'failure'])
                     throw err
@@ -208,7 +208,30 @@ else if ( env.BRANCH_NAME ==~ /^demo__[\w-]+$/ ) {
                 }
             }
         }
-        utils.ircNotification(config, [message: utils.demoAppURL(appname), status: 'shipped'])
+
+        // INTEGRATION TESTS
+
+        // queue up test closures
+        def allTests = [:]
+        def appURL = "https://${appname}.virginia.moz.works"
+
+        for (filename in ['headless', 'firefox', 'chrome', 'ie', 'ie6', 'ie7']) {
+            allTests[filename] = utils.integrationTestJob(filename, appURL)
+        }
+        stage ("Test ${appname}-virginia") {
+            try {
+                // wait for server to be ready
+                sleep(time: 10, unit: 'SECONDS')
+                parallel allTests
+            } catch(err) {
+                utils.ircNotification(config, [stage: "Integration Tests ${appname}-${region.name}", status: 'failure'])
+                throw err
+            }
+        }
+
+        // END INTEGRATION TESTS
+
+        utils.ircNotification(config, [message: appURL, status: 'shipped'])
     }
 }
 else {
