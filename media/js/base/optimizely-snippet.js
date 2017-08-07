@@ -10,6 +10,30 @@
     // If doNotTrack is not enabled, it is ok to add Optimizely
     // @see https://bugzilla.mozilla.org/show_bug.cgi?id=1217896 for more details
     if (typeof Mozilla.dntEnabled === 'function' && !Mozilla.dntEnabled() && OPTIMIZELY_PROJECT_ID) {
+        if (Mozilla.Cookies) {
+            // Check to see if referrer was already stored.
+            var originalReferrer = Mozilla.Cookies.getItem('mozoptly-original-referrer');
+
+            // Check if redirect happened (value is empty string/falsy, so don't
+            // use getItem).
+
+            // NOTE: this cookie value is provided by Optimizely, so could
+            // change at any time, but it's the only way to know if a redirect
+            // occurred. :(
+            var optlyDidRedirect = Mozilla.Cookies.hasItem('optimizelyRedirect');
+
+            // Only set the referrer cookie if it isn't already set *and* a
+            // redirect did not take place.
+            if (!originalReferrer && !optlyDidRedirect) {
+                // If a visitor landed directly on the page, default to 'direct'.
+                var ref = document.referrer || 'direct';
+                // Cookie must be set to root path in the event optimizely
+                // redirects to a different moz.org URL.
+                Mozilla.Cookies.setItem('mozoptly-original-referrer', ref, null, '/');
+            }
+        }
+
+        // now that referrer dance is complete, load optimizely
         (function(d, optID) {
             var newScriptTag = d.createElement('script');
             var target = d.getElementsByTagName('script')[0];

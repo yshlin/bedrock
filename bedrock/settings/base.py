@@ -1326,6 +1326,10 @@ CSP_CHILD_SRC = (
     'accounts.firefox.com',
     'accounts.firefox.com.cn',
     'www.youtube.com',
+    'tagmanager.google.com',
+    'fonts.googleapis.com',
+    'ssl.gstatic.com',
+    'www.gstatic.com',
 )
 CSP_CONNECT_SRC = CSP_DEFAULT_SRC + (
     '*.optimizely.com',
