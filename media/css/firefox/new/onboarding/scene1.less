@@ -315,6 +315,14 @@ html.show-refresh {
     }
 }
 
+// hides 'Available Languages' link in /firefox/includes/download-list.html
+// for locales with up to date localization.
+// should be removed when l10n_has_tag('firefox_new_install_options') is no
+// longer needed
+.no-lang-link #download-platform-list-release-languages-link {
+    display: none;
+}
+
 /* Tablet Layout: 760px */
 @media only screen and (min-width: @breakTablet) and (max-width: @breakDesktop) {
     #download-buttons .download-other-desktop {
